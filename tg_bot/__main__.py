@@ -385,7 +385,7 @@ def donate(bot: Bot, update: Update):
 
         if OWNER_ID != 254318997 and DONATION_LINK:
             update.effective_message.reply_text("You can also donate to the person currently running me "
-                                                "[here]({})".format(DONATION_LINK),
+                                                "[here]()".format(DONATION_LINK),
                                                 parse_mode=ParseMode.MARKDOWN)
 
     else:
