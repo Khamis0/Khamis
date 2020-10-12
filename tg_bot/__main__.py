@@ -19,25 +19,28 @@ from tg_bot.modules.helper_funcs.chat_status import is_user_admin
 from tg_bot.modules.helper_funcs.misc import paginate_modules
 
 PM_START_TEXT = """
-Habari yako *{}*, Mimi ni Robot Jinalangu ni *{}*! Kupata Menu Zangu zote, Gusa hapo 👉 /help -
+Hi *{}*, my name is *{}*! If you have any questions on how to use me, read /help -
 """
 
 HELP_STRINGS = """
-Karibu Katika Menu Zangu.
+Hey there! My name is *{}*.
+I'm a modular group management bot with a few fun extras! Have a look at the following for an idea of some of \
+the things I can help you with.
 
-Anza na Alama hii 👉 / or !.
+*Main* commands available:
+ - /start: start the bot
+ - /help: PM's you this message.
+ - /help <module name>: PM's you info about that module.
+ - /donate: information about how to donate!
+ - /settings:
+   - in PM: will send you your settings for all supported modules.
+   - in a group: will redirect you to pm, with all that chat's settings.
+
+{}
+And the following:
 """
 DONATE_STRING = """*Assalaam Aleykum* Habaari za Saahizi, Hii nisehemu inayo husu Utengenezaji [my creator](t.me/Twuwbaa).\
 Khamis Au Hamis Nimtengenezaji Wa Marobot Hapa Telegram Kama una hitaji Kutengenezewa Robot Kama hili onana na Mimia au nitafute Katika @Huduma
-"""
-AMLIZETU = """
-1. /ors Ongejaga
-
-2. /frs Futaga
-
-3. /rs lolaga 👀
-
-4. /lrs idadi
 """
 IMPORTED = {}
 MIGRATEABLE = []
@@ -356,15 +359,6 @@ def get_settings(bot: Bot, update: Update):
         send_settings(chat.id, user.id, True)
 
 @run_async
-def amlizangu(bot: Bot, update: Update):
-    user = update.effective_message.from_user
-    chat = update.effective_chat  # type: Optional[Chat]
-
-    if chat.type == "private":
-        update.effective_message.reply_text(AMLIZETU, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
-
-
-@run_async
 def donate(bot: Bot, update: Update):
     user = update.effective_message.from_user
     chat = update.effective_chat  # type: Optional[Chat]
@@ -415,7 +409,6 @@ def main():
     settings_handler = CommandHandler("settings", get_settings)
     settings_callback_handler = CallbackQueryHandler(settings_button, pattern=r"stngs_")
 
-    amlizangu_handler = CommandHandler("amlizangu", amlizangu)
     migrate_handler = MessageHandler(Filters.status_update.migrate, migrate_chats)
 
     khamis_handler = CommandHandler("khamis", donate)
@@ -428,7 +421,6 @@ def main():
     dispatcher.add_handler(help_callback_handler)
     dispatcher.add_handler(settings_callback_handler)
     dispatcher.add_handler(migrate_handler)
-    dispatcher.add_handler(amlizangu_handler)
     dispatcher.add_handler(khamis_handler)
 
     # dispatcher.add_error_handler(error_callback)
