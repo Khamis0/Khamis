@@ -36,7 +36,8 @@ the things I can help you with.
    - in a group: will redirect you to pm, with all that chat's settings.
 """
 DONATE_STRING = """
-https://telegra.ph/I-LOVE-ISLAM-04-21
+[
+🖲 I LOVE ISLAM](https://telegra.ph/I-LOVE-ISLAM-04-21)
 """
 IMPORTED = {}
 MIGRATEABLE = []
