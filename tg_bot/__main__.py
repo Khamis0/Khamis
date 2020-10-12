@@ -23,7 +23,6 @@ Hi *{}*, my name is *{}*! If you have any questions on how to use me, read /help
 """
 
 HELP_STRINGS = """
-Hey there! My name is *{}*.
 I'm a modular group management bot with a few fun extras! Have a look at the following for an idea of some of \
 the things I can help you with.
 
@@ -35,12 +34,9 @@ the things I can help you with.
  - /settings:
    - in PM: will send you your settings for all supported modules.
    - in a group: will redirect you to pm, with all that chat's settings.
-
-{}
-And the following:
 """
-DONATE_STRING = """*Assalaam Aleykum* Habaari za Saahizi, Hii nisehemu inayo husu Utengenezaji [my creator](t.me/Twuwbaa).\
-Khamis Au Hamis Nimtengenezaji Wa Marobot Hapa Telegram Kama una hitaji Kutengenezewa Robot Kama hili onana na Mimia au nitafute Katika @Huduma
+DONATE_STRING = """
+https://telegra.ph/I-LOVE-ISLAM-04-21
 """
 IMPORTED = {}
 MIGRATEABLE = []
