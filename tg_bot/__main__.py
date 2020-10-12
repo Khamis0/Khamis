@@ -19,40 +19,26 @@ from tg_bot.modules.helper_funcs.chat_status import is_user_admin
 from tg_bot.modules.helper_funcs.misc import paginate_modules
 
 PM_START_TEXT = """
-Hi {}, my name is {}! If you have any questions on how to use me, read /help -
-
-I'm a group manager bot maintained by this wonderful person .  I'm built in python3, using the \
-python-telegram-bot library,  - you can find what makes me tick \
-
-You can find the list of available commands with /help.
-
-If you're enjoying using me, and/or would like to help me survive in the wild, hit /donate to help fund/upgrade my VPS!
+Habari yako *{}*, Mimi ni Robot Jinalangu ni *{}*! Kupata Menu Zangu zote, Gusa hapo 👉 /help -
 """
 
 HELP_STRINGS = """
-Hey there! My name is *{}*.
-I'm a modular group management bot with a few fun extras! Have a look at the following for an idea of some of \
-the things I can help you with.
+Karibu Katika Menu Zangu.
 
-*Main* commands available:
- - /start: start the bot
- - /help: PM's you this message.
- - /help <module name>: PM's you info about that module.
- - /donate: information about how to donate!
- - /settings:
-   - in PM: will send you your settings for all supported modules.
-   - in a group: will redirect you to pm, with all that chat's settings.
+Anza na Alama hii 👉 / or !.
+"""
+DONATE_STRING = """*Assalaam Aleykum* Habaari za Saahizi, Hii nisehemu inayo husu Utengenezaji [my creator](t.me/Twuwbaa).\
+Khamis Au Hamis Nimtengenezaji Wa Marobot Hapa Telegram Kama una hitaji Kutengenezewa Robot Kama hili onana na Mimia au nitafute Katika @Huduma
+"""
+AMLIZETU = """
+1. /ors Ongejaga
 
-{}
-And the following:
-""".format(dispatcher.bot.mention_markdown, "" if not ALLOW_EXCL else "\nAll commands can either be used with / or !.\n")
+2. /frs Futaga
 
-DONATE_STRING = """Heya, glad to hear you want to donate!
-It took lots of work for [my creator](t.me/SonOfLars) to get me to where I am now, and every donation helps \
-motivate him to make me even better. All the donation money will go to a better VPS to host me, and/or beer \
-(see his bio!). He's just a poor student, so every little helps!
-There are two ways of paying him; [PayPal](paypal.me/PaulSonOfLars), or [Monzo](monzo.me/paulnionvestergaardlarsen)."""
+3. /rs lolaga 👀
 
+4. /lrs idadi
+"""
 IMPORTED = {}
 MIGRATEABLE = []
 HELPABLE = {}
@@ -143,9 +129,9 @@ def start(bot: Bot, update: Update, args: List[str]):
                 IMPORTED["rules"].send_rules(update, args[0], from_pm=True)
 
         else:
-            mention_markdown = update.effective_user.mention_markdown
+            first_name = update.effective_user.first_name
             update.effective_message.reply_text(
-                PM_START_TEXT.format(escape_markdown(mention_markdown), escape_markdown(bot.mention_markdown), OWNER_ID),
+                PM_START_TEXT.format(escape_markdown(first_name), escape_markdown(bot.first_name), OWNER_ID),
                 parse_mode=ParseMode.MARKDOWN)
     else:
         update.effective_message.reply_text("Yo, whadup?")
@@ -369,6 +355,14 @@ def get_settings(bot: Bot, update: Update):
     else:
         send_settings(chat.id, user.id, True)
 
+@run_async
+def amlizangu(bot: Bot, update: Update):
+    user = update.effective_message.from_user
+    chat = update.effective_chat  # type: Optional[Chat]
+
+    if chat.type == "private":
+        update.effective_message.reply_text(AMLIZETU, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+
 
 @run_async
 def donate(bot: Bot, update: Update):
@@ -421,7 +415,10 @@ def main():
     settings_handler = CommandHandler("settings", get_settings)
     settings_callback_handler = CallbackQueryHandler(settings_button, pattern=r"stngs_")
 
-    donate_handler = CommandHandler("donate", donate)
+    amlizangu_handler = CommandHandler("amlizangu", amlizangu)
+    migrate_handler = MessageHandler(Filters.status_update.migrate, migrate_chats)
+
+    khamis_handler = CommandHandler("khamis", donate)
     migrate_handler = MessageHandler(Filters.status_update.migrate, migrate_chats)
 
     # dispatcher.add_handler(test_handler)
@@ -431,7 +428,8 @@ def main():
     dispatcher.add_handler(help_callback_handler)
     dispatcher.add_handler(settings_callback_handler)
     dispatcher.add_handler(migrate_handler)
-    dispatcher.add_handler(donate_handler)
+    dispatcher.add_handler(amlizangu_handler)
+    dispatcher.add_handler(khamis_handler)
 
     # dispatcher.add_error_handler(error_callback)
 
