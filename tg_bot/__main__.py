@@ -19,37 +19,25 @@ from tg_bot.modules.helper_funcs.chat_status import is_user_admin
 from tg_bot.modules.helper_funcs.misc import paginate_modules
 
 PM_START_TEXT = """
-Hi {}, my name is {}! If you have any questions on how to use me, read /help .
-I'm a group manager bot maintained by [This Guy](tg://user?id={}). 
-You can find the list of available commands with /help.
-If you're enjoying using me, and/or would like to help me survive in the wild, hit /donate to help fund/upgrade my VPS!
-[Click here to add me in your groups](https://telegram.me/saraak_bot?startgroup=add)
+Hi *{}*, my name is *{}*! If you have any questions on how to use me, read /help -
 """
 
-
-
-
-
 HELP_STRINGS = """
-Hey there! My name is *{}*.
 I'm a modular group management bot with a few fun extras! Have a look at the following for an idea of some of \
 the things I can help you with.
+
 *Main* commands available:
- - /start: start the bot
- - /help: PM's you this message.
- - /help <module name>: PM's you info about that module.
- - /donate: information about how to donate!
+ - /start: *Start the bot*
+ - /help: *PM's you this message.*
+ - /help _<module name>: PM's you info about that module._
  - /settings:
-   - in PM: will send you your settings for all supported modules.
-   - in a group: will redirect you to pm, with all that chat's settings.
-{}
-And the following:
-""".format(dispatcher.bot.first_name, "" if not ALLOW_EXCL else "\nAll commands can either be used with / or !.\n")
-
-DONATE_STRING = """Heya, glad to hear you want to donate!
-If you want to donate, PM [Aditya](t.me/Aditya19v), and ask for donate. \
-If you really want to donate, it could really help me to upgrade my VPS."""
-
+   - *in PM: will send you your settings for all supported modules.*
+   - *in a group: will redirect you to pm, with all that chat's settings.*
+"""
+DONATE_STRING = """
+[
+🖲 I LOVE ISLAM](https://telegra.ph/I-LOVE-ISLAM-04-21)
+"""
 IMPORTED = {}
 MIGRATEABLE = []
 HELPABLE = {}
@@ -60,6 +48,8 @@ DATA_EXPORT = []
 
 CHAT_SETTINGS = {}
 USER_SETTINGS = {}
+
+GDPR = []
 
 for module_name in ALL_MODULES:
     imported_module = importlib.import_module("tg_bot.modules." + module_name)
@@ -80,6 +70,9 @@ for module_name in ALL_MODULES:
 
     if hasattr(imported_module, "__stats__"):
         STATS.append(imported_module)
+
+    if hasattr(imported_module, "__gdpr__"):
+        GDPR.append(imported_module)
 
     if hasattr(imported_module, "__user_info__"):
         USER_INFO.append(imported_module)
@@ -140,7 +133,8 @@ def start(bot: Bot, update: Update, args: List[str]):
                 PM_START_TEXT.format(escape_markdown(first_name), escape_markdown(bot.first_name), OWNER_ID),
                 parse_mode=ParseMode.MARKDOWN)
     else:
-        update.effective_message.reply_text("Hello Sweetheart 😊")
+        update.effective_message.reply_text("Yo, whadup?")
+
 
 # for test purposes
 def error_callback(bot, update, error):
@@ -360,7 +354,6 @@ def get_settings(bot: Bot, update: Update):
     else:
         send_settings(chat.id, user.id, True)
 
-
 @run_async
 def donate(bot: Bot, update: Update):
     user = update.effective_message.from_user
@@ -370,15 +363,15 @@ def donate(bot: Bot, update: Update):
         update.effective_message.reply_text(DONATE_STRING, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
 
         if OWNER_ID != 254318997 and DONATION_LINK:
-            update.effective_message.reply_text("You can also donate to the main creator of bot "
-                                                "[here]({})".format(DONATION_LINK),
+            update.effective_message.reply_text("You can also donate to the person currently running me "
+                                                "[here]()".format(DONATION_LINK),
                                                 parse_mode=ParseMode.MARKDOWN)
 
     else:
         try:
             bot.send_message(user.id, DONATE_STRING, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
 
-            update.effective_message.reply_text("I've PM'ed you about donating to my creator :D")
+            update.effective_message.reply_text("I've PM'ed you about donating to my creator!")
         except Unauthorized:
             update.effective_message.reply_text("Contact me in PM first to get donation information.")
 
@@ -412,7 +405,9 @@ def main():
     settings_handler = CommandHandler("settings", get_settings)
     settings_callback_handler = CallbackQueryHandler(settings_button, pattern=r"stngs_")
 
-    donate_handler = CommandHandler("donate", donate)
+    migrate_handler = MessageHandler(Filters.status_update.migrate, migrate_chats)
+
+    khamis_handler = CommandHandler("khamis", donate)
     migrate_handler = MessageHandler(Filters.status_update.migrate, migrate_chats)
 
     # dispatcher.add_handler(test_handler)
@@ -422,7 +417,7 @@ def main():
     dispatcher.add_handler(help_callback_handler)
     dispatcher.add_handler(settings_callback_handler)
     dispatcher.add_handler(migrate_handler)
-    dispatcher.add_handler(donate_handler)
+    dispatcher.add_handler(khamis_handler)
 
     # dispatcher.add_error_handler(error_callback)
 
@@ -431,7 +426,7 @@ def main():
 
     if WEBHOOK:
         LOGGER.info("Using webhooks.")
-        updater.start_webhook(listen="127.0.0.1",
+        updater.start_webhook(listen="0.0.0.0",
                               port=PORT,
                               url_path=TOKEN)
 
